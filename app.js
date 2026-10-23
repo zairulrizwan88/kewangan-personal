@@ -107,7 +107,32 @@
     const owed=debts.filter(d=>d.debt_type==="owed").reduce((s,d)=>s+remainingDebt(d),0);
     $("statDebt").textContent=money(owe-owed);
     $("dashboardBills").innerHTML=list.length?list.sort((a,b)=>(a.due_date||"").localeCompare(b.due_date||"")).map(b=>`<div class="record-top" style="padding:10px 0;border-bottom:1px solid var(--line)"><div><strong>${esc(b.name)}</strong><div class="record-meta">${esc(b.category)} · Tarikh akhir ${esc(b.due_date||"—")}</div></div><div style="text-align:right"><strong>${money(b.amount)}</strong><div><span class="pill ${b.is_paid?"":"unpaid"}">${b.is_paid?"Dibayar":"Belum bayar"}</span></div></div></div>`).join(""):'<div class="empty-state">Tiada bil untuk bulan ini.</div>';
+    renderCategoryChart(list);
+    renderMonthComparison(m, total);
   }
+
+  function renderCategoryChart(list) {
+    const el=$("categoryChart");
+    if(!list.length){el.innerHTML='<div class="empty-state">Tiada data bil untuk bulan ini.</div>';return;}
+    const groups={}; list.forEach(b=>{const k=b.category||"Lain-lain";groups[k]=(groups[k]||0)+Number(b.amount||0);});
+    const rows=Object.entries(groups).sort((a,b)=>b[1]-a[1]);
+    const max=rows[0]?.[1]||1;
+    el.innerHTML=rows.map(([name,amount],i)=>`<div class="category-row"><div class="category-label"><span>${esc(name)}</span><strong>${money(amount)}</strong></div><div class="bar-track"><span class="category-bar bar-${i%5}" style="width:${Math.max(3,amount/max*100)}%"></span></div></div>`).join("");
+  }
+  function renderMonthComparison(month,total) {
+    const el=$("monthCompare");
+    const [year,mon]=month.split("-").map(Number);
+    const previousDate=new Date(year,mon-2,1);
+    const previousKey=`${previousDate.getFullYear()}-${String(previousDate.getMonth()+1).padStart(2,"0")}`;
+    const previousLabel=previousDate.toLocaleDateString("ms-MY",{month:"long",year:"numeric"});
+    const currentLabel=new Date(year,mon-1,1).toLocaleDateString("ms-MY",{month:"long",year:"numeric"});
+    const previousTotal=bills.filter(b=>String(b.bill_month||"").slice(0,7)===previousKey).reduce((s,b)=>s+Number(b.amount||0),0);
+    const max=Math.max(total,previousTotal,1),diff=total-previousTotal;
+    const pct=previousTotal?Math.abs(diff)/previousTotal*100:null;
+    const trend=diff===0?"Tiada perubahan":diff>0?`Naik ${pct.toFixed(1)}% berbanding bulan lepas`:`Turun ${pct.toFixed(1)}% berbanding bulan lepas`;
+    el.innerHTML=`<div class="compare-total"><span>Jumlah bulan ini</span><strong>${money(total)}</strong><small class="${diff>0?"trend-up":diff<0?"trend-down":"trend-flat"}">${previousTotal?trend:"Belum ada rekod bulan lepas untuk perbandingan."}</small></div><div class="compare-bars"><div class="compare-item"><div class="compare-caption"><span>${esc(previousLabel)}</span><strong>${money(previousTotal)}</strong></div><div class="bar-track"><span class="compare-bar previous-bar" style="width:${previousTotal/max*100}%"></span></div></div><div class="compare-item"><div class="compare-caption"><span>${esc(currentLabel)}</span><strong>${money(total)}</strong></div><div class="bar-track"><span class="compare-bar current-bar" style="width:${total/max*100}%"></span></div></div></div><p class="compare-note">Perbandingan berdasarkan bil yang direkodkan dalam aplikasi.</p>`;
+  }
+
   function renderBills() {
     const m=val("billMonth")||monthNow(), cat=val("billCategoryFilter");
     const list=bills.filter(b=>String(b.bill_month||"").slice(0,7)===m&&(!cat||b.category===cat)).sort((a,b)=>(a.due_date||"").localeCompare(b.due_date||""));

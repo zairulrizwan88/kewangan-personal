@@ -67,12 +67,16 @@
       <section id="tab-dashboard" class="tab-panel">
         <div class="section-heading"><div><p class="eyebrow">GAMBARAN KEWANGAN</p><h2>Ringkasan bulanan</h2></div><input id="dashboardMonth" type="month"></div>
         <div class="stats-grid">
-          <article class="stat-card"><span>Jumlah bil</span><strong id="statTotal">RM0.00</strong></article>
-          <article class="stat-card"><span>Sudah dibayar</span><strong id="statPaid">RM0.00</strong></article>
-          <article class="stat-card"><span>Belum dibayar</span><strong id="statUnpaid">RM0.00</strong></article>
-          <article class="stat-card"><span>Baki hutang bersih</span><strong id="statDebt">RM0.00</strong></article>
+          <article class="stat-card stat-total"><span><i class="stat-dot"></i>Jumlah komitmen</span><strong id="statTotal">RM0.00</strong><small>Semua bil bulan ini</small></article>
+          <article class="stat-card"><span><i class="stat-dot paid-dot"></i>Sudah dibayar</span><strong id="statPaid">RM0.00</strong><small>Bayaran selesai</small></article>
+          <article class="stat-card"><span><i class="stat-dot unpaid-dot"></i>Belum dibayar</span><strong id="statUnpaid">RM0.00</strong><small>Perlu tindakan</small></article>
+          <article class="stat-card"><span><i class="stat-dot debt-dot"></i>Baki hutang bersih</span><strong id="statDebt">RM0.00</strong><small>Hutang bersih semasa</small></article>
         </div>
-        <div class="panel"><div class="section-heading"><h3>Bil bulan dipilih</h3><button class="btn btn-primary" data-go="bills">Urus bil</button></div><div id="dashboardBills" class="empty-state">Tiada bil untuk bulan ini.</div></div>
+        <div class="dashboard-grid">
+          <article class="panel chart-panel"><div class="panel-title"><div><p class="eyebrow">PECAHAN</p><h3>Perbelanjaan mengikut kategori</h3></div><span class="mini-tag">Bulan dipilih</span></div><div id="categoryChart" class="category-chart"><p class="empty-state">Data kategori akan dipaparkan di sini.</p></div></article>
+          <article class="panel chart-panel"><div class="panel-title"><div><p class="eyebrow">TREND BULANAN</p><h3>Banding dengan bulan lepas</h3></div><span class="mini-tag">Bulan ke bulan</span></div><div id="monthCompare" class="month-compare"><p class="empty-state">Perbandingan akan dipaparkan di sini.</p></div></article>
+        </div>
+        <div class="panel bills-preview"><div class="section-heading"><div><p class="eyebrow">SENARAI TERKINI</p><h3>Bil bulan dipilih</h3></div><button class="btn btn-primary" data-go="bills">Urus bil <span aria-hidden="true">→</span></button></div><div id="dashboardBills" class="empty-state">Tiada bil untuk bulan ini.</div></div>
         <p class="muted small">Nilai hutang bersih = baki hutang yang anda perlu bayar ditolak baki hutang yang orang perlu bayar kepada anda.</p>
       </section>
 
