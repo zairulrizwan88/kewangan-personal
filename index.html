@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ms">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#123b35">
+  <title>Kewangan Peribadi</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">PENGURUS KEWANGAN</p>
+      <h1>Kewangan Peribadi</h1>
+    </div>
+    <button id="signOutBtn" class="btn btn-outline hidden">Log keluar</button>
+  </header>
+
+  <main>
+    <section id="setupNotice" class="panel notice hidden">
+      <h2>Konfigurasi diperlukan</h2>
+      <p>Masukkan URL projek Supabase dan anon/publishable key dalam fail <code>app-config.js</code>. Jangan masukkan <strong>service_role key</strong> dalam aplikasi web.</p>
+    </section>
+
+    <section id="authView" class="auth-layout">
+      <div class="hero panel">
+        <span class="hero-icon">RM</span>
+        <h2>Urus duit dengan lebih teratur.</h2>
+        <p>Simpan rekod bil, tabung dan hutang dalam satu tempat. Data disimpan dalam pangkalan data peribadi anda dan boleh diakses dari peranti lain selepas log masuk.</p>
+        <ul>
+          <li>Bil bulanan dan status bayaran</li>
+          <li>Tabung sasaran dan sejarah transaksi</li>
+          <li>Hutang perlu bayar / orang berhutang</li>
+          <li>Backup dan restore dalam format JSON</li>
+        </ul>
+      </div>
+      <form id="authForm" class="panel auth-form">
+        <h2 id="authTitle">Log masuk</h2>
+        <p class="muted">Gunakan email dan kata laluan anda.</p>
+        <label for="email">Email</label>
+        <input id="email" type="email" autocomplete="email" required placeholder="nama@email.com">
+        <label for="password">Kata laluan</label>
+        <input id="password" type="password" autocomplete="current-password" required minlength="6" placeholder="Sekurang-kurangnya 6 aksara">
+        <button id="authSubmit" class="btn btn-primary" type="submit">Log masuk</button>
+        <button id="toggleAuth" class="link-button" type="button">Belum ada akaun? Daftar</button>
+        <p id="authMessage" class="message" role="status"></p>
+      </form>
+    </section>
+
+    <section id="appView" class="hidden">
+      <div class="welcome-row">
+        <div><p class="muted small">Akaun</p><strong id="userEmail"></strong></div>
+        <button id="backupBtn" class="btn btn-outline">Backup data</button>
+        <button id="restoreBtn" class="btn btn-outline">Restore data</button>
+        <input id="restoreFile" type="file" accept="application/json,.json" class="hidden">
+      </div>
+
+      <nav class="tabs" aria-label="Bahagian aplikasi">
+        <button class="tab active" data-tab="dashboard">Ringkasan</button>
+        <button class="tab" data-tab="bills">Bil bulanan</button>
+        <button class="tab" data-tab="funds">Tabung</button>
+        <button class="tab" data-tab="debts">Hutang</button>
+      </nav>
+
+      <section id="tab-dashboard" class="tab-panel">
+        <div class="section-heading"><div><p class="eyebrow">GAMBARAN KEWANGAN</p><h2>Ringkasan bulanan</h2></div><input id="dashboardMonth" type="month"></div>
+        <div class="stats-grid">
+          <article class="stat-card"><span>Jumlah bil</span><strong id="statTotal">RM0.00</strong></article>
+          <article class="stat-card"><span>Sudah dibayar</span><strong id="statPaid">RM0.00</strong></article>
+          <article class="stat-card"><span>Belum dibayar</span><strong id="statUnpaid">RM0.00</strong></article>
+          <article class="stat-card"><span>Baki hutang bersih</span><strong id="statDebt">RM0.00</strong></article>
+        </div>
+        <div class="panel"><div class="section-heading"><h3>Bil bulan dipilih</h3><button class="btn btn-primary" data-go="bills">Urus bil</button></div><div id="dashboardBills" class="empty-state">Tiada bil untuk bulan ini.</div></div>
+        <p class="muted small">Nilai hutang bersih = baki hutang yang anda perlu bayar ditolak baki hutang yang orang perlu bayar kepada anda.</p>
+      </section>
+
+      <section id="tab-bills" class="tab-panel hidden">
+        <div class="section-heading"><div><p class="eyebrow">KOMITMEN BERKALA</p><h2>Bil bulanan</h2></div><button id="addBillBtn" class="btn btn-primary">+ Tambah bil</button></div>
+        <div class="toolbar"><input id="billMonth" type="month"><select id="billCategoryFilter"><option value="">Semua kategori</option><option>Utiliti</option><option>Insurans</option><option>Yuran</option><option>Pinjaman</option><option>Langganan</option><option>Lain-lain</option></select></div>
+        <div id="billsList" class="card-list"></div>
+      </section>
+
+      <section id="tab-funds" class="tab-panel hidden">
+        <div class="section-heading"><div><p class="eyebrow">SIMPANAN BERASAS SASARAN</p><h2>Tabung</h2></div><button id="addFundBtn" class="btn btn-primary">+ Tambah tabung</button></div>
+        <p class="muted">Contoh: yuran sekolah tahunan, cukai jalan dan insurans kenderaan.</p>
+        <div id="fundsList" class="card-list"></div>
+      </section>
+
+      <section id="tab-debts" class="tab-panel hidden">
+        <div class="section-heading"><div><p class="eyebrow">REKOD TANGGUNGAN</p><h2>Hutang</h2></div><button id="addDebtBtn" class="btn btn-primary">+ Tambah hutang</button></div>
+        <div class="toolbar"><select id="debtTypeFilter"><option value="">Semua jenis</option><option value="owe">Saya perlu bayar</option><option value="owed">Orang berhutang dengan saya</option></select></div>
+        <div id="debtsList" class="card-list"></div>
+      </section>
+      <p id="globalMessage" class="message" role="status"></p>
+    </section>
+  </main>
+
+  <dialog id="itemDialog">
+    <form id="itemForm" method="dialog">
+      <div class="dialog-heading"><h2 id="dialogTitle">Tambah rekod</h2><button type="button" id="closeDialog" class="icon-button" aria-label="Tutup">×</button></div>
+      <div id="dialogFields" class="form-grid"></div>
+      <div class="dialog-actions"><button type="button" id="cancelDialog" class="btn btn-outline">Batal</button><button type="submit" class="btn btn-primary">Simpan</button></div>
+      <p id="dialogMessage" class="message" role="status"></p>
+    </form>
+  </dialog>
+  <dialog id="confirmDialog">
+    <form method="dialog">
+      <h2 id="confirmTitle">Sahkan tindakan</h2><p id="confirmText"></p>
+      <div class="dialog-actions"><button class="btn btn-outline" value="cancel">Batal</button><button id="confirmAction" class="btn btn-danger" value="confirm">Teruskan</button></div>
+    </form>
+  </dialog>
+
+  <footer><span>Kewangan Peribadi</span><span>Data peribadi • Supabase</span></footer>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app-config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
