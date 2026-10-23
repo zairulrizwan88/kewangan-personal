@@ -26,3 +26,15 @@ body:has(#authView:not(.hidden)) #toggleAuth { align-self:center; }
 .payment-toggle.is-paid .payment-check{background:#286b4d;border-color:#286b4d;color:#fff}
 .payment-toggle.is-unpaid .payment-check{background:#fff}
 .payment-toggle:focus-visible{outline:3px solid #b8d9c2;outline-offset:2px}
+
+
+/* Checkbox placed directly beside each bill name */
+.bill-name-wrap{display:flex;align-items:flex-start;gap:10px;min-width:0;flex:1}
+.bill-name-text{min-width:0}
+.payment-checkbox{display:inline-grid;place-items:center;flex:0 0 25px;width:25px;height:25px;margin-top:1px;padding:0;border:2px solid #b9c5bb;border-radius:7px;background:#fff;color:#fff;font-size:17px;font-weight:900;line-height:1;transition:background .15s,border-color .15s;cursor:pointer}
+.payment-checkbox.is-paid{background:#286b4d;border-color:#286b4d}
+.payment-checkbox.is-unpaid{background:#fff}
+.payment-checkbox:hover{border-color:#286b4d}
+.payment-checkbox:focus-visible{outline:3px solid #b8d9c2;outline-offset:2px}
+.bill-paid-name{color:#68756c}
+.bill-name-wrap .record-meta{overflow-wrap:anywhere}
